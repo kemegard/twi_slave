@@ -101,12 +101,6 @@ Each pair of lines corresponds to one master transaction cycle
 On nRF54L15 the crossbar uses **different function selectors** for
 TWIM (master) and TWIS (slave). The overlay must use
 `NRF_PSEL(TWIS_SDA, ...)` / `NRF_PSEL(TWIS_SCL, ...)` — using the
-TWIM selectors causes the crossbar to route the wrong signal and
-the bus will not work.
-
-### NVIC interrupt enable
-The Zephyr TWIS shim (`drivers/i2c/i2c_nrfx_twis.c`) calls
-`IRQ_CONNECT()` to register the ISR but never calls `irq_enable()`.
-As a workaround, `main()` calls `irq_enable(DT_IRQN(NODE_TWIS))`
-explicitly after `i2c_target_register()` so that TWIS events are
-actually delivered to the CPU.
+TWIM selectors causes `pinctrl_apply_state()` to silently route the
+pins to the TWIM function (the error is discarded with `(void)`) so
+the TWIS hardware never sees any bus activity.

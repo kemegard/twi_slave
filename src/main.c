@@ -1,7 +1,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/i2c.h>
-#include <zephyr/irq.h>
 #include <zephyr/sys/printk.h>
 #include <string.h>
 
@@ -66,12 +65,6 @@ int main(void)
                 printk("ERROR: i2c_target_register failed (%d)\n", ret);
                 return ret;
         }
-
-        /*
-         * The Zephyr TWIS shim registers the ISR but never calls irq_enable().
-         * Enable the NVIC line explicitly so TWIS events reach the CPU.
-         */
-        irq_enable(DT_IRQN(NODE_TWIS));
 
         printk("TWI Slave ready - waiting for master...\n");
 
