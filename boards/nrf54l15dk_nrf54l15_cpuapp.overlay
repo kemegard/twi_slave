@@ -1,0 +1,53 @@
+/*
+ * Copyright 2024 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * nRF54L15DK  –  TWI Slave overlay
+ *
+ * Uses i2c22 (TWIS) as the I2C slave, address 0x54.
+ *
+ * Physical wiring to the master board:
+ *   P1.08  SDA  ────  Master SDA
+ *   P1.12  SCL  ────  Master SCL
+ *   GND         ────  GND
+ *
+ * Note: bias-pull-up keeps SDA/SCL high when the bus is idle.
+ *       The master board may also supply pull-ups; having both is fine.
+ */
+
+/ {
+	aliases {
+		i2c-slave = &i2c22;
+	};
+};
+
+&pinctrl {
+	i2c22_default_alt: i2c22_default_alt {
+		group1 {
+			/*
+			 * Temporary workaround: pin selection for TWIS is not
+			 * yet fully supported via pinctrl, so skip_psel_cfg=true
+			 * is used in the driver and pinctrl handles GPIO config.
+			 */
+			psels = <NRF_PSEL(TWIM_SDA, 1, 8)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c22_sleep_alt: i2c22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 8)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2c22 {
+	compatible = "nordic,nrf-twis";
+	status = "okay";
+	pinctrl-0 = <&i2c22_default_alt>;
+	pinctrl-1 = <&i2c22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
