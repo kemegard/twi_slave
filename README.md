@@ -8,6 +8,9 @@ Zephyr I2C target buffer-mode API. It echoes back whatever 4-byte
 value was last written by the master, allowing the master to verify
 each round-trip.
 
+The companion master project is at
+<https://github.com/kemegard/twi_master>.
+
 ---
 
 ## Hardware
