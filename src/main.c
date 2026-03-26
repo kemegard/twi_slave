@@ -10,10 +10,10 @@
  *              prints it to the console.
  *  - On READ:  returns the last stored payload to the master.
  *
- * Hardware wiring (to master board):
- *   Slave P1.08 (SDA)  ----  Master SDA
- *   Slave P1.12 (SCL)  ----  Master SCL
- *   Common GND          ----  Common GND
+ * Hardware wiring (to master board, matches original test example):
+ *   Slave P1.09 (SDA)  ----  Master P1.08 (SDA)
+ *   Slave P1.13 (SCL)  ----  Master P1.12 (SCL)
+ *   Common GND         ----  Common GND
  *
  * Build:
  *   west build -b nrf54l15dk/nrf54l15/cpuapp -- -DAPP_DIR=<path_to_twi_slave>
