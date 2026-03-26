@@ -93,14 +93,3 @@ TWIS: read request
 Each pair of lines corresponds to one master transaction cycle
 (write followed by read-back).
 
----
-
-## Implementation notes
-
-### Pinctrl function selector
-On nRF54L15 the crossbar uses **different function selectors** for
-TWIM (master) and TWIS (slave). The overlay must use
-`NRF_PSEL(TWIS_SDA, ...)` / `NRF_PSEL(TWIS_SCL, ...)` — using the
-TWIM selectors causes `pinctrl_apply_state()` to silently route the
-pins to the TWIM function (the error is discarded with `(void)`) so
-the TWIS hardware never sees any bus activity.
