@@ -6,10 +6,13 @@
  *
  * Uses i2c22 (TWIS) as the I2C slave, address 0x54.
  *
- * Physical wiring to the master board (matches original test example):
- *   Slave P1.09  SDA  ────  Master P1.08  SDA
- *   Slave P1.13  SCL  ────  Master P1.12  SCL
+ * Physical wiring to the master board:
+ *   Slave P1.08  SDA  ────  Master P1.08  SDA
+ *   Slave P1.12  SCL  ────  Master P1.12  SCL
  *   GND               ────  GND
+ *
+ * Both boards use identical pin numbers, so the wiring is pin-to-pin
+ * at the same position on each board's PORT P1 header.
  *
  * Note: bias-pull-up keeps SDA/SCL high when the bus is idle.
  *       The master board may also supply pull-ups; having both is fine.
@@ -29,16 +32,16 @@
 			 * yet fully supported via pinctrl, so skip_psel_cfg=true
 			 * is used in the driver and pinctrl handles GPIO config.
 			 */
-			 psels = <NRF_PSEL(TWIM_SDA, 1, 9)>,
-				<NRF_PSEL(TWIM_SCL, 1, 13)>;
+			 psels = <NRF_PSEL(TWIM_SDA, 1, 8)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
 			bias-pull-up;
 		};
 	};
 
 	i2c22_sleep_alt: i2c22_sleep_alt {
 		group1 {
-			 psels = <NRF_PSEL(TWIM_SDA, 1, 9)>,
-				<NRF_PSEL(TWIM_SCL, 1, 13)>;
+			 psels = <NRF_PSEL(TWIM_SDA, 1, 8)>,
+				<NRF_PSEL(TWIM_SCL, 1, 12)>;
 			low-power-enable;
 		};
 	};

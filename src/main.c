@@ -10,10 +10,12 @@
  *              prints it to the console.
  *  - On READ:  returns the last stored payload to the master.
  *
- * Hardware wiring (to master board, matches original test example):
- *   Slave P1.09 (SDA)  ----  Master P1.08 (SDA)
- *   Slave P1.13 (SCL)  ----  Master P1.12 (SCL)
+ * Hardware wiring (to master board):
+ *   Slave P1.08 (SDA)  ----  Master P1.08 (SDA)
+ *   Slave P1.12 (SCL)  ----  Master P1.12 (SCL)
  *   Common GND         ----  Common GND
+ *
+ * Both boards use the same pin numbers - wire P1.08-to-P1.08, P1.12-to-P1.12.
  *
  * Build:
  *   west build -b nrf54l15dk/nrf54l15/cpuapp -- -DAPP_DIR=<path_to_twi_slave>
@@ -39,8 +41,8 @@ static uint8_t slave_buf[BUFFER_SIZE];
 
 /*
  * Called by the TWIS shim when the master issues a read.
- * Provide a pointer to our buffer and its size; the shim copies
- * the data into its own DMA-safe buffer before arming the TX FIFO.
+ * The shim copies our data into its DMA-safe internal buffer.
+ * Signature: int (*)(struct i2c_target_config *, uint8_t **, uint32_t *)
  */
 static int target_buf_read_requested(struct i2c_target_config *config,
 				     uint8_t **buf, uint32_t *len)
@@ -53,8 +55,8 @@ static int target_buf_read_requested(struct i2c_target_config *config,
 
 /*
  * Called by the TWIS shim after the master finishes writing.
- * The shim passes a pointer to its internal receive buffer and
- * the number of bytes received.
+ * The shim passes its internal DMA buffer and the byte count received.
+ * Signature: void (*)(struct i2c_target_config *, uint8_t *, uint32_t)
  */
 static void target_buf_write_received(struct i2c_target_config *config,
 				      uint8_t *buf, uint32_t len)
@@ -71,8 +73,10 @@ static void target_buf_write_received(struct i2c_target_config *config,
 }
 
 static const struct i2c_target_callbacks target_callbacks = {
+#ifdef CONFIG_I2C_TARGET_BUFFER_MODE
 	.buf_read_requested  = target_buf_read_requested,
 	.buf_write_received  = target_buf_write_received,
+#endif
 };
 
 static struct i2c_target_config target_cfg = {
